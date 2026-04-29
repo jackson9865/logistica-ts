@@ -227,33 +227,16 @@ function handleSuccessfulScan(data) {
     }
 
     if (activeScreen.id === 'screen-forklift') {
-        const statusDiv = document.getElementById('address-validation-status');
-        const finishBtn = document.getElementById('btn-finish-forklift');
-        const forkliftResult = document.getElementById('forklift-result');
-        const qtySelector = document.getElementById('forklift-qty-selector');
-
-        if (forkliftResult.style.display === 'none' || forkliftResult.style.display === '') {
-            // First scan: product identified — show info and quantity selector
-            forkliftResult.style.display = 'block';
-            qtySelector.style.display = 'block';
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        } else {
-            // Second scan: address validation
-            if (data === "PG15" || data === "SIMULATED_DATA" || data === "LT9876-PHARMA") {
-                statusDiv.style.display = 'block';
-                statusDiv.style.background = 'rgba(16, 185, 129, 0.2)';
-                statusDiv.style.color = '#10b981';
-                statusDiv.style.border = '1px solid #10b981';
-                statusDiv.innerText = "✅ ENDEREÇO CORRETO: PG15 VALIDADO!";
-                finishBtn.style.display = 'block';
-            } else {
-                statusDiv.style.display = 'block';
-                statusDiv.style.background = 'rgba(239, 68, 68, 0.2)';
-                statusDiv.style.color = '#ef4444';
-                statusDiv.style.border = '1px solid #ef4444';
-                statusDiv.innerText = `❌ ERRO: ENDEREÇO ${data} INCORRETO!`;
-                finishBtn.style.display = 'none';
-            }
+        const product = findProductBySKU(data);
+        if (product) {
+            currentEntry = { ...product };
+            document.getElementById('fork-prod-name').innerText = product.productName;
+            document.getElementById('fork-prod-sku').innerText = `SKU: ${product.sku}`;
+            document.getElementById('fork-prod-lot').innerText = product.lot;
+            document.getElementById('fork-prod-val').innerText = product.validity;
+            document.getElementById('fork-prod-address').innerText = product.address;
+            document.getElementById('forklift-product-info').style.display = 'block';
+            document.getElementById('forklift-controls').style.display = 'block';
         }
     }
 
@@ -262,13 +245,25 @@ function handleSuccessfulScan(data) {
         const s2 = document.getElementById('picking-step-2');
         if (s1 && s1.style.display !== 'none') {
             const info = document.getElementById('pickup-info');
-            info.style.display = 'block';
+            if (info) info.style.display = 'block';
             const task = dailyTasks[currentTaskIndex];
             const nameEl = document.getElementById('pickup-product-name');
             if (nameEl && task) nameEl.innerText = task.item;
         }
-        if (s2 && s2.style.display !== 'none') document.getElementById('btn-finish-reposicao').style.display = 'block';
+        if (s2 && s2.style.display !== 'none') {
+            const finishBtn = document.getElementById('btn-finish-reposicao');
+            if (finishBtn) finishBtn.style.display = 'block';
+        }
     }
+}
+
+function finishForkliftTask() {
+    const qtyInput = document.getElementById('forklift-qty-input');
+    const qty = qtyInput ? qtyInput.value : "1";
+    alert(`✅ ARMAZENAGEM CONCLUÍDA!\n${qty} caixas de ${currentEntry.productName} foram guardadas no endereço ${currentEntry.address}.`);
+    document.getElementById('forklift-product-info').style.display = 'none';
+    document.getElementById('forklift-controls').style.display = 'none';
+    showScreen('screen-home');
 }
 
 // -------------------------------------------------------
@@ -607,17 +602,25 @@ function loginUser(user) {
     sessionStorage.setItem('ts_session', JSON.stringify({ id: user.id, name: user.name }));
     currentUser = { name: user.name, id: user.id };
     
-    // Atualiza nome se o elemento existir (Null check)
+    // 1. Atualiza o nome na faixa de boas-vindas do Dashboard
+    const bannerNameEl = document.getElementById('user-welcome-name');
+    if (bannerNameEl) bannerNameEl.innerText = user.name.toUpperCase();
+    
+    // 2. Atualiza outros elementos de boas-vindas (se houver)
     const welcomeEl = document.getElementById('user-welcome');
     if (welcomeEl) welcomeEl.innerText = `BEM-VINDO, ${user.name.toUpperCase()}`;
     
-    // Mostra navegação se o elemento existir
+    // 3. Mostra a barra de navegação
     const navEl = document.getElementById('main-nav');
     if (navEl) navEl.style.display = 'flex';
     
     showScreen('screen-home');
-    document.getElementById('login-id').value = "";
-    document.getElementById('login-pass').value = "";
+    
+    // 4. Limpa os campos de login
+    const idInput = document.getElementById('login-id');
+    const passInput = document.getElementById('login-pass');
+    if (idInput) idInput.value = "";
+    if (passInput) passInput.value = "";
 }
 
 async function handleUserRegistration() {
