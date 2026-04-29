@@ -352,55 +352,72 @@ function changeConfFracQty(delta) {
 }
 
 // -------------------------------------------------------
-// SCREEN NAVIGATION
+// SCREEN NAVIGATION & HISTORY
 // -------------------------------------------------------
-function showScreen(screenId) {
+let screenHistory = [];
+
+function showScreen(screenId, saveHistory = true) {
     const screens = document.querySelectorAll('.screen');
+    const currentActive = document.querySelector('.screen.active');
+    
+    // Save history if it's a new screen
+    if (saveHistory && currentActive && currentActive.id !== screenId) {
+        screenHistory.push(currentActive.id);
+    }
+
     screens.forEach(screen => screen.classList.remove('active'));
 
     const target = document.getElementById(screenId);
     if (target) {
         target.classList.add('active');
         
+        // Logic for specific screens
         if (screenId === 'screen-phase1') {
             document.getElementById('lote-val-input').value = "";
             document.getElementById('sku-check').classList.remove('checked');
             document.getElementById('product-scan-result').style.display = 'none';
             const nextBtn = document.getElementById('btn-phase1-next');
-            nextBtn.style.opacity = '0.5';
-            nextBtn.style.pointerEvents = 'none';
+            if (nextBtn) {
+                nextBtn.style.opacity = '0.5';
+                nextBtn.style.pointerEvents = 'none';
+            }
         }
 
-        // Update dashboard when entering home screen
         if (screenId === 'screen-home') {
             updateDashboard();
+            screenHistory = []; // Reset history when back to home
         }
 
-        // Clear login fields when entering login screen
         if (screenId === 'screen-login') {
             document.getElementById('login-id').value = "";
             document.getElementById('login-pass').value = "";
         }
 
-        // Render dynamic label when entering phase 2
         if (screenId === 'screen-phase2') {
             renderLabel();
         }
+        
+        if (screenId === 'screen-forklift') resetForkliftUI();
+        if (screenId === 'screen-phase3') {
+            resetReposicaoUI();
+            updateReposicaoUI();
+        }
     }
 
-    const navBtns = document.querySelectorAll('.nav-btn');
-    navBtns.forEach(btn => btn.classList.remove('active'));
-    
-    if (screenId === 'screen-home') navBtns[0].classList.add('active');
-    if (screenId === 'screen-phase1' || screenId === 'screen-phase2') navBtns[1].classList.add('active');
-    if (screenId === 'screen-forklift') {
-        navBtns[1].classList.add('active');
-        resetForkliftUI();
+    // Nav Bar visibility
+    const navEl = document.getElementById('main-nav');
+    if (navEl) {
+        const noNavScreens = ['screen-welcome', 'screen-login', 'screen-user-register', 'screen-forgot-password'];
+        navEl.style.display = noNavScreens.includes(screenId) ? 'none' : 'flex';
     }
-    if (screenId === 'screen-phase3') {
-        navBtns[2].classList.add('active');
-        resetReposicaoUI();
-        updateReposicaoUI();
+}
+
+function handleNavigationBack() {
+    if (screenHistory.length > 0) {
+        const lastScreen = screenHistory.pop();
+        showScreen(lastScreen, false);
+    } else {
+        showScreen('screen-home');
     }
 }
 
@@ -618,34 +635,39 @@ async function handleUserRegistration() {
             return;
         }
 
-        regBtn.innerText = "⏳ CONECTANDO À NUVEM...";
+        regBtn.innerText = "⏳ SALVANDO NA NUVEM...";
         regBtn.disabled = true;
 
-        // Fetch latest users from cloud to MERGE
+        // 1. Puxa os usuários mais recentes da nuvem para NÃO apagar ninguém
         await syncUsersWithCloud();
         let users = JSON.parse(localStorage.getItem('ts_users') || '[]');
         
+        // 2. Verifica se já existe
         if (users.find(u => String(u.id) === String(matricula))) {
             alert('⚠️ Esta matrícula já existe no sistema central!');
             return;
         }
 
+        // 3. Adiciona o novo e salva localmente primeiro (garantia)
         const newUser = { name, id: matricula, pass, company };
         users.push(newUser);
+        localStorage.setItem('ts_users', JSON.stringify(users));
         
-        // Save to Cloud (PUT overwrites with the full new list)
+        // 4. Tenta enviar para a nuvem (JSONBin)
         const cloudRes = await fetch(CLOUD_DB_URL, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-Bin-Meta': 'false'
+            },
             body: JSON.stringify(users)
         });
 
-        if (!cloudRes.ok) throw new Error("Erro de conexão com o servidor central.");
+        if (!cloudRes.ok) throw new Error("O servidor não respondeu. Tente novamente em instantes.");
 
-        localStorage.setItem('ts_users', JSON.stringify(users));
-        
         alert('✅ SUCESSO: Cadastro realizado e sincronizado em todos os aparelhos!');
         
+        // Limpar e voltar
         document.getElementById('reg-user-name').value = "";
         document.getElementById('reg-user-id').value = "";
         document.getElementById('reg-user-pass').value = "";
@@ -653,7 +675,8 @@ async function handleUserRegistration() {
         
         showScreen('screen-login');
     } catch (error) {
-        alert('❌ ERRO: ' + error.message + '\nVerifique sua internet ou clique em "FORÇAR ATUALIZAÇÃO" na tela inicial.');
+        console.error("Erro no cadastro:", error);
+        alert('❌ ERRO NO CADASTRO: ' + error.message);
     } finally {
         regBtn.innerText = originalText;
         regBtn.disabled = false;
@@ -662,26 +685,26 @@ async function handleUserRegistration() {
 
 async function syncUsersWithCloud() {
     try {
-        const res = await fetch(CLOUD_DB_URL, { cache: 'no-store' });
+        const res = await fetch(CLOUD_DB_URL, { 
+            method: 'GET',
+            headers: { 'Cache-Control': 'no-cache' } 
+        });
+        
         if (res.ok) {
-            const data = await res.json();
-            // Firebase returns an array or null
-            const cloudUsers = Array.isArray(data) ? data : (data && typeof data === 'object' ? Object.values(data) : []);
+            const cloudUsers = await res.json();
+            const localUsers = JSON.parse(localStorage.getItem('ts_users') || '[]');
             
-            // Local persistence
-            const localUsersStr = localStorage.getItem('ts_users');
-            const localUsers = JSON.parse(localUsersStr || '[]');
-            
+            // Merge inteligente (quem tem matrícula ganha)
             const userMap = new Map();
             localUsers.forEach(u => { if(u && u.id) userMap.set(String(u.id), u); });
             cloudUsers.forEach(u => { if(u && u.id) userMap.set(String(u.id), u); });
             
             const mergedUsers = Array.from(userMap.values());
             localStorage.setItem('ts_users', JSON.stringify(mergedUsers));
-            console.log("Cloud Sync Success.");
+            console.log("Sincronização com a nuvem OK. Total de usuários:", mergedUsers.length);
         }
     } catch (e) {
-        console.error("Cloud Sync Error:", e);
+        console.error("Falha ao sincronizar com a nuvem:", e);
     }
 }
 
