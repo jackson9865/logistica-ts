@@ -3,14 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Jackson Sovereign | Rastreabilidade</title>
-    <link rel="stylesheet" href="style_v15.css">
+    <link rel="stylesheet" href="style_v15.css?v=1.7.2">
     <script>
         // Nuclear Cache Reset & SW Disable
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(regs => {
                 for(let r of regs) r.unregister();
             });
+        }
+        // Force refresh on first load if version mismatch
+        if(!localStorage.getItem('sys_version_fix_172')) {
+            localStorage.setItem('sys_version_fix_172', 'true');
+            window.location.reload(true);
         }
     </script>
     <link rel="manifest" href="manifest.json">
@@ -293,6 +301,6 @@
     </div>
 
     <!-- LOGIC -->
-    <script src="app_v15.js"></script>
+    <script src="app_v15.js?v=1.7.2"></script>
 </body>
 </html>
