@@ -9,12 +9,27 @@
     <title>Jackson Sovereign | Rastreabilidade</title>
     <link rel="stylesheet" href="style_v15.css?v=1.7.2">
     <script>
+        // FORÇA ATUALIZAÇÃO TOTAL (BOMBA DE CACHE v1.8.6)
+        const CURRENT_VERSION = '1.8.6';
+        if (localStorage.getItem('sys_ver') !== CURRENT_VERSION) {
+            localStorage.setItem('sys_ver', CURRENT_VERSION);
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(regs => {
+                    for(let r of regs) r.unregister();
+                });
+            }
+            caches.keys().then(names => {
+                for (let name of names) caches.delete(name);
+            });
+            window.location.reload(true);
+        }
+
         // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=1.8.5')
-                    .then(reg => console.log('App Instalável: Pronto!'))
-                    .catch(err => console.log('Erro ao preparar instalação:', err));
+                navigator.serviceWorker.register('sw.js?v=1.8.6')
+                    .then(reg => console.log('PWA: Ativo'))
+                    .catch(err => console.log('PWA Erro:', err));
             });
         }
     </script>
@@ -71,7 +86,7 @@
                 </div>
                 
                 <div class="glass-card">
-                    <div style="text-align: center; color: #10b981; font-weight: bold; font-size: 12px; margin-bottom: 15px;">✅ SISTEMA PRONTO v1.8.3</div>
+                    <div style="text-align: center; color: #10b981; font-weight: bold; font-size: 12px; margin-bottom: 15px;">✅ SISTEMA PRONTO v1.8.6</div>
                     <div class="input-group">
                         <label>Matrícula</label>
                         <input type="text" id="login-id" placeholder="Digite sua matrícula">
@@ -87,7 +102,7 @@
                         <a href="javascript:void(0)" onclick="showScreen('screen-forgot-password')" style="color: var(--text-muted); font-size: 13px; text-decoration: none;">Esqueci minha senha</a>
                     </div>
                     <div style="text-align: center; margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-                        <div style="font-size: 10px; color: var(--text-muted); opacity: 0.5;">Jackson Sovereign Logistics v1.8.5</div>
+                        <div style="font-size: 10px; color: var(--text-muted); opacity: 0.5;">Jackson Sovereign Logistics v1.8.6</div>
                     </div>
                 </div>
             </div>
@@ -411,6 +426,6 @@
     </div>
 
     <!-- LOGIC -->
-    <script src="app_v185.js?v=1.8.5"></script>
+    <script src="app_v186.js?v=1.8.6"></script>
 </body>
 </html>
