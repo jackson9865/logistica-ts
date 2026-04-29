@@ -203,8 +203,17 @@
                     <div class="glass-card-slim" onclick="showScreen('screen-stock-query')">
                         <div class="slim-indicator" style="background: #94a3b8;"></div>
                         <div class="slim-content">
-                            <div class="slim-title">CONSULTAR / CONFERÊNCIA</div>
-                            <div class="slim-subtitle">RAIO-X DE PALLET E LOCALIZAÇÃO</div>
+                            <div class="slim-title">CONSULTAR ESTOQUE</div>
+                            <div class="slim-subtitle">BUSCA POR LOTE OU PRODUTO</div>
+                        </div>
+                        <div class="slim-arrow">❯</div>
+                    </div>
+
+                    <div class="glass-card-slim" onclick="showScreen('screen-conferencia')">
+                        <div class="slim-indicator" style="background: #e11d48;"></div>
+                        <div class="slim-content">
+                            <div class="slim-title">CONFERÊNCIA MASTER</div>
+                            <div class="slim-subtitle">VALIDAÇÃO TÉCNICA VIA SCANNER</div>
                         </div>
                         <div class="slim-arrow">❯</div>
                     </div>
@@ -219,31 +228,39 @@
                 </div>
             </div>
 
-            <!-- SCREEN: CONSULTA ESTOQUE -->
-            <!-- SCREEN: CONSULTA / CONFERÊNCIA -->
+            <!-- SCREEN: CONSULTA ESTOQUE (BUSCA) -->
             <div id="screen-stock-query" class="screen">
                 <div class="glass-card" style="margin-top: 10px;">
-                    <div class="phase-tag" style="background: rgba(59, 130, 246, 0.2); color: var(--primary);">CONFERÊNCIA</div>
-                    <h2>Consultar Pallet</h2>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">Bipe o QR Master ou digite o código/lote abaixo.</p>
+                    <div class="phase-tag">CONSULTA</div>
+                    <h2>Localizar Mercadoria</h2>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">Digite o lote ou nome do produto.</p>
                     
-                    <div class="scanner-view" id="reader-query" onclick="startCamera('reader-query')" style="height: 120px; margin-bottom: 20px;">
-                        <div class="scanner-line"></div>
-                        <div style="font-size: 10px; opacity: 0.6; margin-top: 40px; text-align: center; width: 100%;">TOQUE PARA BIPAR ETIQUETA MASTER</div>
-                    </div>
-
                     <div class="input-group">
-                        <label>Código, Lote ou ID</label>
+                        <label>Busca Rápida</label>
                         <div style="display: flex; gap: 10px;">
-                            <input type="text" id="query-lote-input" placeholder="Ex: 020 ou LT9876">
+                            <input type="text" id="query-lote-input" placeholder="Ex: LT9876 ou Dipirona">
                             <button class="btn btn-primary" style="width: 60px; padding: 0;" onclick="runStockQuery()">🔍</button>
                         </div>
                     </div>
                 </div>
-                
                 <div id="query-results" style="padding: 0 5px;"></div>
-                
-                <button class="btn btn-outline" style="margin-top: 20px; border-color: rgba(255,255,255,0.1);" onclick="showScreen('screen-home')">⬅️ VOLTAR PARA O INÍCIO</button>
+                <button class="btn btn-outline" style="margin-top: 20px; border-color: rgba(255,255,255,0.1);" onclick="showScreen('screen-home')">⬅️ VOLTAR</button>
+            </div>
+
+            <!-- SCREEN: CONFERÊNCIA MASTER (SCANNER) -->
+            <div id="screen-conferencia" class="screen">
+                <div class="glass-card" style="margin-top: 10px; border: 1px solid rgba(225, 29, 72, 0.3);">
+                    <div class="phase-tag" style="background: #e11d48;">CONFERÊNCIA</div>
+                    <h2>Validar Etiqueta Master</h2>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Bipe o QR Code para ver a ficha técnica.</p>
+                    
+                    <div class="scanner-view" id="reader-conf" onclick="startCamera('reader-conf')" style="height: 220px; border: 2px solid #e11d48;">
+                        <div class="scanner-line" style="background: #e11d48; box-shadow: 0 0 15px #e11d48;"></div>
+                        <div style="font-size: 12px; opacity: 0.8; margin-top: 80px; text-align: center; width: 100%; color: #fff;">APONTE PARA O QR MASTER</div>
+                    </div>
+                </div>
+                <div id="conf-results" style="padding: 0 5px;"></div>
+                <button class="btn btn-outline" style="margin-top: 20px; border-color: rgba(255,255,255,0.1);" onclick="showScreen('screen-home')">⬅️ VOLTAR</button>
             </div>
 
             <!-- SCREEN: PHASE 1 (RECEBIMENTO) -->

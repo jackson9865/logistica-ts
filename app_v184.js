@@ -268,6 +268,10 @@ function handleSuccessfulScan(data) {
         runStockQuery();
     }
 
+    if (activeScreen.id === 'screen-conferencia') {
+        runConferenceScan(data);
+    }
+
     if (activeScreen.id === 'screen-phase3') {
         const s1 = document.getElementById('picking-step-1');
         const s2 = document.getElementById('picking-step-2');
@@ -290,7 +294,6 @@ function runStockQuery() {
     const resultsDiv = document.getElementById('query-results');
     const products = getProducts();
     
-    // Procura por SKU, Nome, Lote ou ID
     const found = products.filter(p => 
         p.sku.toLowerCase().includes(query) || 
         p.productName.toLowerCase().includes(query) || 
@@ -300,34 +303,56 @@ function runStockQuery() {
 
     if (found.length > 0) {
         resultsDiv.innerHTML = found.map(p => `
-            <div class="glass-card" style="border-left: 4px solid var(--primary); padding: 15px;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-                    <div>
-                        <div style="font-size: 11px; color: var(--primary); font-weight: 700;">ID: ${p.productId}</div>
-                        <div style="font-size: 16px; font-weight: 700; color: #fff;">${p.productName}</div>
-                    </div>
-                    <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 700;">ESTOQUE ATIVO</div>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
-                    <div style="background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px;">
-                        <div style="font-size: 9px; color: var(--text-muted);">LOTE</div>
-                        <div style="font-size: 12px; font-weight: 600;">${p.lot}</div>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px;">
-                        <div style="font-size: 9px; color: var(--text-muted);">VALIDADE</div>
-                        <div style="font-size: 12px; font-weight: 600;">${p.validity}</div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 12px; padding: 10px; background: rgba(59, 130, 246, 0.05); border-radius: 8px; border: 1px solid rgba(59,130,246,0.1);">
-                    <div style="font-size: 9px; color: var(--primary); font-weight: 700;">LOCALIZAÇÃO MASTER</div>
-                    <div style="font-size: 14px; font-weight: 700;">${p.address}</div>
-                </div>
+            <div class="glass-card" style="border-left: 4px solid var(--primary); padding: 12px; margin-bottom: 10px;">
+                <div style="font-size: 14px; font-weight: 700; color: #fff;">${p.productName}</div>
+                <div style="font-size: 11px; color: var(--text-muted);">LOTE: ${p.lot} | ID: ${p.productId}</div>
+                <div style="margin-top: 8px; font-size: 13px; color: var(--secondary); font-weight: 700;">📍 LOCAL: ${p.address}</div>
             </div>
         `).join('');
     } else {
-        resultsDiv.innerHTML = `<div style="text-align: center; padding: 30px; color: var(--text-muted);">❌ Nenhum produto ou pallet encontrado.</div>`;
+        resultsDiv.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--text-muted);">Nenhum item localizado.</div>`;
+    }
+}
+
+function runConferenceScan(data) {
+    const product = findProductBySKU(data);
+    const resultsDiv = document.getElementById('conf-results');
+    
+    if (product) {
+        resultsDiv.innerHTML = `
+            <div class="glass-card" style="border: 2px solid #e11d48; padding: 15px; background: rgba(225, 29, 72, 0.05);">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <div style="font-size: 11px; color: #e11d48; font-weight: 900;">FICHA TÉCNICA MASTER</div>
+                    <div style="font-size: 20px; font-weight: 900; color: #fff;">${product.productName}</div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
+                        <div style="font-size: 10px; color: var(--text-muted);">ID PALLET</div>
+                        <div style="font-size: 14px; font-weight: 700;">#${product.productId}</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
+                        <div style="font-size: 10px; color: var(--text-muted);">LOTE</div>
+                        <div style="font-size: 14px; font-weight: 700;">${product.lot}</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
+                        <div style="font-size: 10px; color: var(--text-muted);">VALIDADE</div>
+                        <div style="font-size: 14px; font-weight: 700;">${product.validity}</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
+                        <div style="font-size: 10px; color: var(--text-muted);">CATEGORIA</div>
+                        <div style="font-size: 14px; font-weight: 700;">LOGÍSTICA</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; padding: 12px; background: rgba(225, 29, 72, 0.1); border-radius: 10px; text-align: center;">
+                    <div style="font-size: 10px; color: #e11d48; font-weight: 900;">ENDEREÇO REGISTRADO</div>
+                    <div style="font-size: 18px; font-weight: 900; color: #fff;">${product.address}</div>
+                </div>
+            </div>
+        `;
+    } else {
+        resultsDiv.innerHTML = `<div style="text-align: center; padding: 20px; color: #e11d48; font-weight: 700;">⚠️ ETIQUETA NÃO RECONHECIDA</div>`;
     }
 }
 
