@@ -9,8 +9,8 @@
     <title>Jackson Sovereign | Rastreabilidade</title>
     <link rel="stylesheet" href="style_v15.css?v=1.7.2">
     <script>
-        // FORÇA ATUALIZAÇÃO TOTAL (BOMBA DE CACHE v1.8.7)
-        const CURRENT_VERSION = '1.8.7';
+        // FORÇA ATUALIZAÇÃO TOTAL (BOMBA DE CACHE v1.8.8)
+        const CURRENT_VERSION = '1.8.8';
         if (localStorage.getItem('sys_ver') !== CURRENT_VERSION) {
             localStorage.setItem('sys_ver', CURRENT_VERSION);
             if ('serviceWorker' in navigator) {
@@ -27,7 +27,7 @@
         // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=1.8.7')
+                navigator.serviceWorker.register('sw.js?v=1.8.8')
                     .then(reg => console.log('PWA: Ativo'))
                     .catch(err => console.log('PWA Erro:', err));
             });
@@ -54,25 +54,26 @@
                     <div class="subtitle">LOGISTICS & TRACEABILITY</div>
                 </div>
                 
-                <div style="padding: 10px;">
-                    <button class="btn btn-primary" style="height: 65px; font-size: 18px; margin-bottom: 15px;" onclick="showScreen('screen-login')">
+                <div style="padding: 10px; text-align: center;">
+                    <button class="btn btn-primary" style="height: 65px; font-size: 18px; width: 100%; margin-bottom: 15px;" onclick="showScreen('screen-login')">
                         <span style="font-size: 20px;">🔑</span> FAZER LOGIN
                     </button>
 
-                    <button class="btn btn-outline" style="height: 60px; font-size: 15px; border-color: rgba(255,255,255,0.1); color: #fff;" onclick="showScreen('screen-user-register')">
-                        <span style="font-size: 16px;">👤</span> NOVO COLABORADOR
+                    <!-- NOVO CADASTRO AGORA É UM LINK NO MEIO -->
+                    <a href="javascript:void(0)" onclick="showScreen('screen-user-register')" style="color: var(--primary); font-size: 14px; text-decoration: none; font-weight: 700; display: inline-block; margin-bottom: 30px; letter-spacing: 1px;">
+                        👤 CADASTRAR NOVO COLABORADOR
+                    </a>
+                </div>
+
+                <div style="position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.1); z-index: 9999;" class="pwa-only-browser">
+                    <!-- Botão de Instalação PWA (AGORA FLUTUANTE NO FUNDO) -->
+                    <button id="btn-install-pwa" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; color: #fff; width: 100%; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 900; box-shadow: 0 -5px 20px rgba(245, 158, 11, 0.2);" onclick="triggerPwaInstall()">
+                        📲 BAIXAR APLICATIVO OFICIAL
                     </button>
                 </div>
 
-                <div style="position: absolute; bottom: 60px; width: 100%; text-align: center; left: 0; padding: 0 20px;">
-                    <!-- Botão de Instalação PWA (LÁ NO FUNDO) -->
-                    <button id="btn-install-pwa" class="pwa-only-browser" style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--secondary); color: var(--secondary); width: 100%; padding: 10px; border-radius: 12px; cursor: pointer;" onclick="triggerPwaInstall()">
-                        <span style="font-size: 14px; font-weight: 700;">📲 BAIXAR APLICATIVO</span>
-                    </button>
-                </div>
-
-                <div style="position: absolute; bottom: 25px; width: 100%; text-align: center; color: var(--text-muted); font-size: 10px; left: 0; opacity: 0.5;">
-                    © 2024 Jackson Sovereign Logistics v1.8.7
+                <div style="position: absolute; bottom: 85px; width: 100%; text-align: center; color: var(--text-muted); font-size: 10px; left: 0; opacity: 0.4;">
+                    © 2024 Jackson Sovereign Logistics v1.8.8
                 </div>
             </div>
 
@@ -425,6 +426,6 @@
     </div>
 
     <!-- LOGIC -->
-    <script src="app_v187.js?v=1.8.7"></script>
+    <script src="app_v188.js?v=1.8.8"></script>
 </body>
 </html>
