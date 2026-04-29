@@ -1,9 +1,9 @@
 let html5QrCode = null;
 let currentUser = { name: 'Operador', id: '000' }; // Tracks the logged-in user
 
-// Global Cloud Configuration (GitHub Pages Edition)
-const CLOUD_DB_URL = 'https://ts-logistics-final-default-rtdb.firebaseio.com/users.json';
-const SYSTEM_VERSION = '1.7-GitHub';
+// Global Cloud Configuration (GitHub Pages Edition - Final Fix)
+const CLOUD_DB_URL = 'https://api.jsonbin.io/v3/b/662e864ead19ca34f861179e?meta=false';
+const SYSTEM_VERSION = '1.7.1-GitHub';
 
 // USUÁRIOS PADRÃO (Sempre disponíveis mesmo offline)
 const DEFAULT_USERS = [
