@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Thomas Sovereign | Rastreabilidade</title>
+    <link rel="stylesheet" href="style_v15.css">
+    <script>
+        // Nuclear Cache Reset & SW Disable
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(regs => {
+                for(let r of regs) r.unregister();
+            });
+        }
+    </script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- EXTERNAL LIBS -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <div id="app-container">
+        <div id="app-overlay"></div>
+        <div id="app-content">
+            
+            <!-- SCREEN: WELCOME -->
+            <div id="screen-welcome" class="screen active">
+                <div style="text-align: center; margin-top: 60px; margin-bottom: 60px;">
+                    <div class="logo" style="font-size: 38px; letter-spacing: 2px;">THOMAS SOVEREIGN</div>
+                    <div class="subtitle">LOGISTICS & TRACEABILITY</div>
+                </div>
+                
+                <div style="padding: 10px;">
+                    <button class="btn btn-primary" style="height: 65px; font-size: 18px; margin-bottom: 20px;" onclick="showScreen('screen-login')">
+                        <span style="font-size: 20px;">🔑</span> FAZER LOGIN
+                    </button>
+                    <button class="btn btn-outline" style="height: 65px; font-size: 16px; border-color: rgba(255,255,255,0.2); color: #fff;" onclick="showScreen('screen-user-register')">
+                        <span style="font-size: 18px;">👤</span> NOVO COLABORADOR
+                    </button>
+                </div>
+
+                <div style="position: absolute; bottom: 30px; width: 100%; text-align: center; color: var(--text-muted); font-size: 11px; left: 0;">
+                    © 2024 TS Multinível - Todos os direitos reservados
+                </div>
+            </div>
+
+            <!-- SCREEN: LOGIN -->
+            <div id="screen-login" class="screen">
+                <div class="floating-home" onclick="showScreen('screen-welcome')">⬅️</div>
+                <div style="text-align: center; margin-bottom: 35px; margin-top: 40px;">
+                    <div class="logo" style="font-size: 28px;">LOGIN</div>
+                    <div class="subtitle">ACESSO AO SISTEMA</div>
+                </div>
+                
+                <div class="glass-card">
+                    <div class="input-group">
+                        <label>Matrícula</label>
+                        <input type="text" id="login-id" placeholder="Digite sua matrícula">
+                    </div>
+                    <div class="input-group">
+                        <label>Senha</label>
+                        <input type="password" id="login-pass" placeholder="••••••••">
+                    </div>
+                    <button class="btn btn-primary" onclick="handleLogin()">
+                        ENTRAR NO SISTEMA
+                    </button>
+                    <button class="btn btn-outline" style="margin-top: 10px; border-style: dashed; color: #3b82f6;" onclick="handleTestLogin()">
+                        🚀 LOGIN DE TESTE (JACKSON)
+                    </button>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <a href="javascript:void(0)" onclick="showScreen('screen-forgot-password')" style="color: var(--text-muted); font-size: 13px; text-decoration: none;">Esqueci minha senha</a>
+                    </div>
+                    <div style="text-align: center; margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                        <div style="font-size: 10px; color: var(--text-muted); opacity: 0.5;">Sovereign Logistics v1.7 - GitHub Edition</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN: NOVO COLABORADOR -->
+            <div id="screen-user-register" class="screen">
+                <div class="floating-home" onclick="showScreen('screen-welcome')">⬅️</div>
+                <div style="text-align: center; margin-bottom: 30px; margin-top: 20px;">
+                    <div class="logo" style="font-size: 28px;">CADASTRO</div>
+                    <div class="subtitle">NOVO COLABORADOR</div>
+                </div>
+                <div class="glass-card">
+                    <div class="input-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="reg-user-name" placeholder="Ex: João Silva">
+                    </div>
+                    <div class="input-group">
+                        <label>Matrícula</label>
+                        <input type="text" id="reg-user-id" placeholder="Digite a matrícula">
+                    </div>
+                    <div class="input-group">
+                        <label>Senha</label>
+                        <input type="password" id="reg-user-pass" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <div class="input-group">
+                        <label>Nome da Empresa</label>
+                        <input type="text" id="reg-user-company" placeholder="Ex: Paguemenos">
+                    </div>
+                    <button class="btn btn-primary" onclick="handleUserRegistration()">CADASTRAR AGORA</button>
+                </div>
+            </div>
+
+            <!-- SCREEN: ESQUECI SENHA -->
+            <div id="screen-forgot-password" class="screen">
+                <div class="floating-home" onclick="showScreen('screen-login')">⬅️</div>
+                <div style="text-align: center; margin-bottom: 30px; margin-top: 20px;">
+                    <div class="logo" style="font-size: 28px;">RECUPERAR</div>
+                    <div class="subtitle">REDEFINIR SENHA</div>
+                </div>
+                <div class="glass-card">
+                    <div class="input-group">
+                        <label>Matrícula</label>
+                        <input type="text" id="reset-id" placeholder="Digite sua matrícula">
+                    </div>
+                    <div class="input-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="reset-name" placeholder="Nome como cadastrado">
+                    </div>
+                    <div class="input-group">
+                        <label>Nome da Empresa</label>
+                        <input type="text" id="reset-company" placeholder="Empresa como cadastrada">
+                    </div>
+                    <div class="input-group">
+                        <label>Nova Senha</label>
+                        <input type="password" id="reset-new-pass" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <button class="btn btn-primary" onclick="handleResetPassword()">ALTERAR SENHA</button>
+                </div>
+            </div>
+
+            <!-- SCREEN: HOME (Dashboard) -->
+            <div id="screen-home" class="screen">
+                <div class="glass-card" style="margin-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div class="phase-tag">DASHBOARD CENTRAL</div>
+                            <h2 style="margin: 0; font-size: 18px;">Status da Operação</h2>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 10px; color: var(--text-muted);">CARGAS PENDENTES</div>
+                            <div id="pending-count" style="font-size: 24px; font-weight: 700; color: var(--accent);">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="central-db-container">
+                    <!-- Dashboard content injected via JS -->
+                </div>
+                
+                <div style="height: 10px;"></div>
+                
+                <div class="glass-card">
+                    <h2>ÚLTIMAS MOVIMENTAÇÕES</h2>
+                    <div id="log-entries" style="font-size: 13px;">
+                        <div style="color: var(--text-muted); text-align: center; padding: 20px;">Nenhum item armazenado ainda</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN: CONSULTA ESTOQUE -->
+            <div id="screen-stock-query" class="screen">
+                <div class="glass-card" style="margin-top: 10px;">
+                    <div class="phase-tag">CONSULTA</div>
+                    <h2>Buscar no Estoque</h2>
+                    <div class="input-group">
+                        <label>Lote do Produto</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="query-lote-input" placeholder="Digite o lote">
+                            <button class="btn btn-primary" style="width: 60px; padding: 0;" onclick="runStockQuery()">🔍</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="query-results"></div>
+            </div>
+
+            <!-- SCREEN: PHASE 1 (RECEBIMENTO) -->
+            <div id="screen-phase1" class="screen">
+                <div class="glass-card" style="margin-top: 10px;">
+                    <div class="phase-tag">ETAPA 1</div>
+                    <h2>Recebimento de Carga</h2>
+                    <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 15px;">Escaneie o código de barras da mercadoria.</p>
+                    
+                    <div class="scanner-view" id="reader">
+                        <div class="scanner-line"></div>
+                    </div>
+
+                    <div id="product-scan-result" style="display: none;">
+                        <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 12px; border: 1px solid var(--secondary); margin-bottom: 15px;">
+                            <div style="font-size: 11px; color: var(--secondary); font-weight: 600;">PRODUTO IDENTIFICADO</div>
+                            <div id="scanned-product-name" style="font-size: 16px; font-weight: 700;">-</div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Lote / Validade</label>
+                        <input type="text" id="lote-val-input" placeholder="Ex: L2304 / VAL 10-25">
+                    </div>
+
+                    <div class="checklist-item" onclick="toggleCheck(this)" id="sku-check">
+                        <div class="check-box"></div>
+                        <div style="font-size: 14px;">Conferência de SKU / Quantidade</div>
+                    </div>
+                    
+                    <button class="btn btn-primary" style="margin-top: 20px;" id="btn-phase1-next" onclick="goToPhase2()">PRÓXIMA ETAPA ➡️</button>
+                </div>
+            </div>
+
+            <!-- SCREEN: PHASE 2 (ETIQUETAGEM) -->
+            <div id="screen-phase2" class="screen">
+                <div class="glass-card" style="margin-top: 10px;">
+                    <div class="phase-tag">ETAPA 2</div>
+                    <h2>Gerar Etiqueta</h2>
+                    <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">Dados para identificação do pallet.</p>
+
+                    <!-- Preview da Etiqueta -->
+                    <div id="label-preview-container">
+                        <!-- Label HTML will be injected here -->
+                    </div>
+
+                    <div class="status-indicator">
+                        <div class="pulse"></div>
+                        <span>Impressora Zebra GK420t Conectada</span>
+                    </div>
+
+                    <button class="btn btn-primary" style="margin-top: 25px;" onclick="printLabel()">🖨️ IMPRIMIR E FINALIZAR</button>
+                    <button class="btn btn-outline" style="margin-top: 10px; border-color: rgba(255,255,255,0.1); color: var(--text-muted);" onclick="showScreen('screen-phase1')">VOLTAR</button>
+                </div>
+            </div>
+
+            <!-- SCREEN: FORKLIFT (ARMAZENAGEM) -->
+            <div id="screen-forklift" class="screen">
+                <div class="glass-card" style="margin-top: 10px;">
+                    <div class="phase-tag">ARMAZENAGEM</div>
+                    <h2>Operação Empilhadeira</h2>
+                    <div id="storage-task-info"></div>
+                    
+                    <div id="forklift-qty-selector" style="display: none; margin-top: 15px;">
+                        <div class="input-group">
+                            <label>Quantidade de Caixas</label>
+                            <input type="number" id="forklift-qty-input" value="1">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" style="margin-top: 20px;" onclick="finishForkliftTask()">✅ CONFIRMAR ARMAZENAGEM</button>
+                </div>
+            </div>
+
+            <!-- SCREEN: PHASE 3 (REPOSIÇÃO) -->
+            <div id="screen-phase3" class="screen">
+                <div class="glass-card" style="margin-top: 10px;">
+                    <div class="phase-tag">ETAPA 3</div>
+                    <h2>Reposição de Picking</h2>
+                    <div id="reposicao-list"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- NAVIGATION -->
+        <nav class="nav-bottom" id="main-nav" style="display: none;">
+            <a href="javascript:void(0)" class="nav-btn active" onclick="showScreen('screen-home')">
+                <div class="nav-icon">📊</div>
+                Dashboard
+            </a>
+            <a href="javascript:void(0)" class="nav-btn" onclick="showScreen('screen-phase1')">
+                <div class="nav-icon">📦</div>
+                Entrada
+            </a>
+            <a href="javascript:void(0)" class="nav-btn" onclick="showScreen('screen-phase3')">
+                <div class="nav-icon">🔄</div>
+                Reposição
+            </a>
+            <a href="javascript:void(0)" class="nav-btn" onclick="showScreen('screen-stock-query')">
+                <div class="nav-icon">🔍</div>
+                Estoque
+            </a>
+        </nav>
+    </div>
+
+    <!-- LOGIC -->
+    <script src="app_v15.js"></script>
+</body>
+</html>

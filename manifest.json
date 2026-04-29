@@ -1,0 +1,17 @@
+{
+  "name": "Thomas Sovereign Logistics",
+  "short_name": "TS Logistics",
+  "description": "Sistema de Rastreabilidade Multinível Thomas Sovereign",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
