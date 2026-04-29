@@ -589,8 +589,15 @@ function handleTestLogin() {
 function loginUser(user) {
     sessionStorage.setItem('ts_session', JSON.stringify({ id: user.id, name: user.name }));
     currentUser = { name: user.name, id: user.id };
-    document.getElementById('user-welcome').innerText = `BEM-VINDO, ${user.name.toUpperCase()}`;
-    document.getElementById('main-nav').style.display = 'flex';
+    
+    // Atualiza nome se o elemento existir (Null check)
+    const welcomeEl = document.getElementById('user-welcome');
+    if (welcomeEl) welcomeEl.innerText = `BEM-VINDO, ${user.name.toUpperCase()}`;
+    
+    // Mostra navegação se o elemento existir
+    const navEl = document.getElementById('main-nav');
+    if (navEl) navEl.style.display = 'flex';
+    
     showScreen('screen-home');
     document.getElementById('login-id').value = "";
     document.getElementById('login-pass').value = "";
@@ -1022,8 +1029,13 @@ window.addEventListener('pagehide', () => sessionStorage.removeItem('ts_session'
 function logout() {
     sessionStorage.removeItem('ts_session');
     currentUser = { name: 'Operador', id: '000' };
-    document.getElementById('main-nav').style.display = 'none';
-    document.getElementById('user-welcome').innerText = 'BEM-VINDO, OPERADOR';
+    
+    const navEl = document.getElementById('main-nav');
+    if (navEl) navEl.style.display = 'none';
+    
+    const welcomeEl = document.getElementById('user-welcome');
+    if (welcomeEl) welcomeEl.innerText = 'BEM-VINDO, OPERADOR';
+    
     showScreen('screen-welcome');
 }
 
