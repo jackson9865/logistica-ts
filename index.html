@@ -9,16 +9,13 @@
     <title>Jackson Sovereign | Rastreabilidade</title>
     <link rel="stylesheet" href="style_v15.css?v=1.7.2">
     <script>
-        // Nuclear Cache Reset & SW Disable
+        // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(regs => {
-                for(let r of regs) r.unregister();
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js?v=1.8.5')
+                    .then(reg => console.log('App Instalável: Pronto!'))
+                    .catch(err => console.log('Erro ao preparar instalação:', err));
             });
-        }
-        // Force refresh on first load if version mismatch
-        if(!localStorage.getItem('sys_version_fix_172')) {
-            localStorage.setItem('sys_version_fix_172', 'true');
-            window.location.reload(true);
         }
     </script>
     <link rel="manifest" href="manifest.json">

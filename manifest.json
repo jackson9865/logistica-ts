@@ -1,9 +1,10 @@
 {
-  "name": "Thomas Sovereign Logistics",
-  "short_name": "TS Logistics",
-  "description": "Sistema de Rastreabilidade Multinível Thomas Sovereign",
+  "name": "Jackson Sovereign Logistics",
+  "short_name": "JS Logistics",
+  "description": "Sistema de Rastreabilidade Master Jackson Sovereign",
   "start_url": "index.html",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#0f172a",
   "theme_color": "#3b82f6",
   "icons": [
