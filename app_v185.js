@@ -5,6 +5,28 @@ let currentUser = { name: 'Operador', id: '000' }; // Tracks the logged-in user
 const CLOUD_DB_URL = 'https://api.jsonbin.io/v3/b/662e864ead19ca34f861179e?meta=false';
 const SYSTEM_VERSION = '1.8.5-GitHub';
 
+// --- PWA INSTALL LOGIC ---
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const installBtn = document.getElementById('btn-install-pwa');
+    if (installBtn) installBtn.style.display = 'flex'; // Mostra o botão quando puder instalar
+});
+
+function triggerPwaInstall() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+            console.log('Usuário aceitou a instalação');
+            const installBtn = document.getElementById('btn-install-pwa');
+            if (installBtn) installBtn.style.display = 'none';
+        }
+        deferredPrompt = null;
+    });
+}
+
 // USUÁRIOS PADRÃO (Sempre disponíveis mesmo offline)
 const DEFAULT_USERS = [
     { name: 'Jackson Oliveira Gomes', id: '151525', pass: 'JAC.9865', company: 'Paguemenos' },

@@ -43,6 +43,12 @@
                     <button class="btn btn-primary" style="height: 65px; font-size: 18px; margin-bottom: 20px;" onclick="showScreen('screen-login')">
                         <span style="font-size: 20px;">🔑</span> FAZER LOGIN
                     </button>
+                    
+                    <!-- Botão de Instalação PWA (Invisível por padrão) -->
+                    <button id="btn-install-pwa" class="btn btn-outline" style="display: none; height: 60px; border-color: var(--secondary); color: var(--secondary); margin-bottom: 20px;" onclick="triggerPwaInstall()">
+                        <span style="font-size: 20px;">📲</span> BAIXAR APLICATIVO
+                    </button>
+
                     <button class="btn btn-outline" style="height: 65px; font-size: 16px; border-color: rgba(255,255,255,0.2); color: #fff;" onclick="showScreen('screen-user-register')">
                         <span style="font-size: 18px;">👤</span> NOVO COLABORADOR
                     </button>
