@@ -15,16 +15,23 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 function triggerPwaInstall() {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-            console.log('Usuário aceitou a instalação');
-            const installBtn = document.getElementById('btn-install-pwa');
-            if (installBtn) installBtn.style.display = 'none';
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                document.getElementById('btn-install-pwa').style.display = 'none';
+            }
+            deferredPrompt = null;
+        });
+    } else {
+        // Fallback: Instruções Manuais
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            alert('📱 PARA INSTALAR NO iPHONE:\n1. Clique no botão de COMPARTILHAR (quadrado com seta).\n2. Role para baixo e clique em "ADICIONAR À TELA DE INÍCIO".');
+        } else {
+            alert('📲 PARA INSTALAR:\nClique nos 3 PONTINHOS do seu navegador e escolha "INSTALAR APLICATIVO" ou "ADICIONAR À TELA INICIAL".');
         }
-        deferredPrompt = null;
-    });
+    }
 }
 
 // USUÁRIOS PADRÃO (Sempre disponíveis mesmo offline)
