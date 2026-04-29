@@ -162,7 +162,23 @@
                     <!-- Dashboard content injected via JS -->
                 </div>
                 
-                <div style="height: 10px;"></div>
+                <!-- BOTOES DE AÇÃO CENTRAIS -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 5px; margin-bottom: 25px;">
+                    <div class="glass-card" onclick="showScreen('screen-phase1')" style="cursor: pointer; text-align: center; padding: 25px 10px; border: 1px solid rgba(59, 130, 246, 0.3);">
+                        <div style="font-size: 32px; margin-bottom: 10px;">📥</div>
+                        <div style="font-size: 13px; font-weight: 700; color: #fff;">ENTRADA</div>
+                    </div>
+                    <div class="glass-card" onclick="showScreen('screen-phase3')" style="cursor: pointer; text-align: center; padding: 25px 10px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                        <div style="font-size: 32px; margin-bottom: 10px;">🔄</div>
+                        <div style="font-size: 13px; font-weight: 700; color: #fff;">REPOSIÇÃO</div>
+                    </div>
+                    <div class="glass-card" onclick="showScreen('screen-stock-query')" style="cursor: pointer; text-align: center; padding: 25px 10px; grid-column: span 2; border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <div style="font-size: 32px; margin-bottom: 10px;">🔍</div>
+                        <div style="font-size: 13px; font-weight: 700; color: #fff;">CONSULTAR ESTOQUE</div>
+                    </div>
+                </div>
+                
+                <div style="height: 5px;"></div>
                 
                 <div class="glass-card">
                     <h2>ÚLTIMAS MOVIMENTAÇÕES</h2>
