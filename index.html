@@ -65,7 +65,7 @@
                 </div>
                 
                 <div class="glass-card">
-                    <div style="text-align: center; color: #10b981; font-weight: bold; font-size: 12px; margin-bottom: 15px;">✅ SISTEMA PRONTO v1.8.2</div>
+                    <div style="text-align: center; color: #10b981; font-weight: bold; font-size: 12px; margin-bottom: 15px;">✅ SISTEMA PRONTO v1.8.3</div>
                     <div class="input-group">
                         <label>Matrícula</label>
                         <input type="text" id="login-id" placeholder="Digite sua matrícula">
@@ -81,7 +81,7 @@
                         <a href="javascript:void(0)" onclick="showScreen('screen-forgot-password')" style="color: var(--text-muted); font-size: 13px; text-decoration: none;">Esqueci minha senha</a>
                     </div>
                     <div style="text-align: center; margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-                        <div style="font-size: 10px; color: var(--text-muted); opacity: 0.5;">Jackson Sovereign Logistics v1.8.2</div>
+                        <div style="font-size: 10px; color: var(--text-muted); opacity: 0.5;">Jackson Sovereign Logistics v1.8.3</div>
                     </div>
                 </div>
             </div>
@@ -144,7 +144,20 @@
 
             <!-- SCREEN: HOME (Dashboard) -->
             <div id="screen-home" class="screen">
-                <div class="glass-card" style="margin-top: 10px;">
+                <!-- PERSONALIZED WELCOME BANNER -->
+                <div id="user-greeting-banner" style="padding: 15px; background: rgba(255,255,255,0.03); border-radius: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 42px; height: 42px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(29, 78, 216, 0.2);">👤</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 10px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Olá, bem-vindo(a)!</div>
+                        <div id="user-welcome-name" style="font-size: 16px; font-weight: 700; color: #fff;">COLABORADOR</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 9px; color: var(--text-muted);">SESSÃO ATIVA</div>
+                        <div style="font-size: 11px; color: #10b981; font-weight: 600;">ONLINE</div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-top: 5px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
                             <div class="phase-tag">DASHBOARD CENTRAL</div>
@@ -260,18 +273,54 @@
             <!-- SCREEN: FORKLIFT (ARMAZENAGEM) -->
             <div id="screen-forklift" class="screen">
                 <div class="glass-card" style="margin-top: 10px;">
-                    <div class="phase-tag">ARMAZENAGEM</div>
-                    <h2>Operação Empilhadeira</h2>
-                    <div id="storage-task-info"></div>
+                    <div class="phase-tag" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">OPERAÇÃO EMPILHADEIRA</div>
+                    <h2>Armazenagem</h2>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">Bipe a etiqueta do pallet para ver os detalhes.</p>
                     
-                    <div id="forklift-qty-selector" style="display: none; margin-top: 15px;">
-                        <div class="input-group">
-                            <label>Quantidade de Caixas</label>
-                            <input type="number" id="forklift-qty-input" value="1">
+                    <!-- Scanner de Armazenagem -->
+                    <div class="scanner-view" id="reader-forklift" onclick="startCamera('reader-forklift')" style="height: 140px; margin-bottom: 20px;">
+                        <div class="scanner-line"></div>
+                        <div id="scanner-instructions-forklift" style="font-size: 10px; opacity: 0.6; margin-top: 50px;">CLIQUE PARA ATIVAR LASER/CÂMERA</div>
+                    </div>
+
+                    <!-- Detalhes do Produto (Aparece após o Bipe) -->
+                    <div id="forklift-product-info" style="display: none; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+                        <div style="display: flex; gap: 10px; align-items: flex-start; margin-bottom: 15px;">
+                            <div style="font-size: 24px;">📦</div>
+                            <div>
+                                <div id="fork-prod-name" style="font-size: 16px; font-weight: 700; color: #fff;">-</div>
+                                <div id="fork-prod-sku" style="font-size: 11px; color: var(--accent);">SKU: -</div>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px;">
+                            <div style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 8px;">
+                                <div style="color: var(--text-muted); font-size: 9px;">LOTE</div>
+                                <div id="fork-prod-lot" style="font-weight: 600;">-</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 8px;">
+                                <div style="color: var(--text-muted); font-size: 9px;">VALIDADE</div>
+                                <div id="fork-prod-val" style="font-weight: 600;">-</div>
+                            </div>
+                        </div>
+
+                        <div style="background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <div style="color: #10b981; font-size: 9px; font-weight: 700;">ENDEREÇO DE DESTINO</div>
+                            <div id="fork-prod-address" style="font-size: 18px; font-weight: 800; color: #10b981;">-</div>
                         </div>
                     </div>
 
-                    <button class="btn btn-primary" style="margin-top: 20px;" onclick="finishForkliftTask()">✅ CONFIRMAR ARMAZENAGEM</button>
+                    <div id="forklift-controls" style="display: none;">
+                        <div class="input-group">
+                            <label>Quantidade de Caixas no Pallet</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <button class="btn btn-outline" style="width: 50px;" onclick="changeForkliftQty(-1)">-</button>
+                                <input type="number" id="forklift-qty-input" value="1" style="text-align: center; font-size: 18px; font-weight: 700;">
+                                <button class="btn btn-outline" style="width: 50px;" onclick="changeForkliftQty(1)">+</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" style="margin-top: 10px;" onclick="finishForkliftTask()">✅ CONFIRMAR ARMAZENAGEM</button>
+                    </div>
                 </div>
             </div>
 
@@ -308,6 +357,6 @@
     </div>
 
     <!-- LOGIC -->
-    <script src="app_v182.js?v=1.8.2"></script>
+    <script src="app_v183.js?v=1.8.3"></script>
 </body>
 </html>
