@@ -3,7 +3,7 @@ let currentUser = { name: 'Operador', id: '000' }; // Tracks the logged-in user
 
 // Global Cloud Configuration (GitHub Pages Edition - Final Fix)
 const CLOUD_DB_URL = 'https://api.jsonbin.io/v3/b/662e864ead19ca34f861179e?meta=false';
-const SYSTEM_VERSION = '1.8.0-GitHub';
+const SYSTEM_VERSION = '1.8.1-GitHub';
 
 // USUÁRIOS PADRÃO (Sempre disponíveis mesmo offline)
 const DEFAULT_USERS = [
@@ -635,38 +635,47 @@ async function handleUserRegistration() {
             return;
         }
 
-        regBtn.innerText = "⏳ SALVANDO NA NUVEM...";
+        regBtn.innerText = "⏳ SALVANDO...";
         regBtn.disabled = true;
 
-        // 1. Puxa os usuários mais recentes da nuvem para NÃO apagar ninguém
-        await syncUsersWithCloud();
+        // 1. Tenta puxar usuários atuais (se falhar, segue com o que tem)
+        try { await syncUsersWithCloud(); } catch(e) { console.warn("Modo Offline"); }
+        
         let users = JSON.parse(localStorage.getItem('ts_users') || '[]');
         
-        // 2. Verifica se já existe
+        // 2. Verifica duplicado
         if (users.find(u => String(u.id) === String(matricula))) {
-            alert('⚠️ Esta matrícula já existe no sistema central!');
+            alert('⚠️ Esta matrícula já existe!');
             return;
         }
 
-        // 3. Adiciona o novo e salva localmente primeiro (garantia)
+        // 3. Salva Local (Garantia que funciona no seu celular na hora)
         const newUser = { name, id: matricula, pass, company };
         users.push(newUser);
         localStorage.setItem('ts_users', JSON.stringify(users));
         
-        // 4. Tenta enviar para a nuvem (JSONBin)
-        const cloudRes = await fetch(CLOUD_DB_URL, {
-            method: 'PUT',
-            headers: { 
-                'Content-Type': 'application/json',
-                'X-Bin-Meta': 'false'
-            },
-            body: JSON.stringify(users)
-        });
+        // 4. Tenta enviar para a Nuvem
+        try {
+            const cloudRes = await fetch(CLOUD_DB_URL, {
+                method: 'PUT',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-Bin-Meta': 'false'
+                    // Se você tiver a Master Key, coloque aqui: 'X-Master-Key': '$2b$10...'
+                },
+                body: JSON.stringify(users)
+            });
 
-        if (!cloudRes.ok) throw new Error("O servidor não respondeu. Tente novamente em instantes.");
+            if (cloudRes.ok) {
+                alert('✅ SUCESSO TOTAL: Cadastrado e Sincronizado na Nuvem!');
+            } else {
+                console.error("Erro Nuvem Status:", cloudRes.status);
+                alert('✅ SALVO LOCALMENTE: O funcionário foi cadastrado no seu celular, mas a nuvem recusou o acesso (Erro 401).');
+            }
+        } catch (cloudErr) {
+            alert('✅ SALVO LOCALMENTE: Funcionário salvo no celular. Sincronização falhou (Sem Internet).');
+        }
 
-        alert('✅ SUCESSO: Cadastro realizado e sincronizado em todos os aparelhos!');
-        
         // Limpar e voltar
         document.getElementById('reg-user-name').value = "";
         document.getElementById('reg-user-id').value = "";
@@ -675,8 +684,7 @@ async function handleUserRegistration() {
         
         showScreen('screen-login');
     } catch (error) {
-        console.error("Erro no cadastro:", error);
-        alert('❌ ERRO NO CADASTRO: ' + error.message);
+        alert('❌ ERRO CRÍTICO: ' + error.message);
     } finally {
         regBtn.innerText = originalText;
         regBtn.disabled = false;
