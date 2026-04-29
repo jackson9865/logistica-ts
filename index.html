@@ -25,13 +25,6 @@
 <body>
     <div id="app-container">
         <div id="app-overlay"></div>
-        <header id="main-header">
-            <div id="header-logo">JACKSON SOVEREIGN</div>
-            <div id="user-info">
-                <span id="user-welcome">BEM-VINDO, OPERADOR</span>
-                <button onclick="logout()" class="btn-logout">Sair</button>
-            </div>
-        </header>
         <div id="app-content">
             
             <!-- SCREEN: WELCOME -->
@@ -160,17 +153,21 @@
 
                 <!-- BOTOES DE AÇÃO CENTRAIS (EMPILHADOS) -->
                 <div style="display: flex; flex-direction: column; gap: 15px; padding: 0 5px; margin-bottom: 25px;">
-                    <div class="glass-card" onclick="showScreen('screen-phase1')" style="cursor: pointer; text-align: center; padding: 30px 10px; border: 1px solid rgba(59, 130, 246, 0.4);">
+                    <div class="glass-card" onclick="showScreen('screen-phase1')" style="cursor: pointer; text-align: center; padding: 25px 10px; border: 1px solid rgba(59, 130, 246, 0.4);">
                         <div style="font-size: 32px; margin-bottom: 10px;">📥</div>
-                        <div style="font-size: 16px; font-weight: 700; color: #fff;">ENTRADA DE MERCADORIA</div>
+                        <div style="font-size: 15px; font-weight: 700; color: #fff;">ENTRADA DE MERCADORIA</div>
                     </div>
-                    <div class="glass-card" onclick="showScreen('screen-phase3')" style="cursor: pointer; text-align: center; padding: 30px 10px; border: 1px solid rgba(16, 185, 129, 0.4);">
+                    <div class="glass-card" onclick="showScreen('screen-forklift')" style="cursor: pointer; text-align: center; padding: 25px 10px; border: 1px solid rgba(245, 158, 11, 0.4);">
+                        <div style="font-size: 32px; margin-bottom: 10px;">🚜</div>
+                        <div style="font-size: 15px; font-weight: 700; color: #fff;">ARMAZENAGEM</div>
+                    </div>
+                    <div class="glass-card" onclick="showScreen('screen-phase3')" style="cursor: pointer; text-align: center; padding: 25px 10px; border: 1px solid rgba(16, 185, 129, 0.4);">
                         <div style="font-size: 32px; margin-bottom: 10px;">🔄</div>
-                        <div style="font-size: 16px; font-weight: 700; color: #fff;">REPOSIÇÃO DE PICKING</div>
+                        <div style="font-size: 15px; font-weight: 700; color: #fff;">REPOSIÇÃO DE PICKING</div>
                     </div>
-                    <div class="glass-card" onclick="showScreen('screen-stock-query')" style="cursor: pointer; text-align: center; padding: 30px 10px; border: 1px solid rgba(255, 255, 255, 0.2);">
+                    <div class="glass-card" onclick="showScreen('screen-stock-query')" style="cursor: pointer; text-align: center; padding: 25px 10px; border: 1px solid rgba(255, 255, 255, 0.2);">
                         <div style="font-size: 32px; margin-bottom: 10px;">🔍</div>
-                        <div style="font-size: 16px; font-weight: 700; color: #fff;">CONSULTAR ESTOQUE</div>
+                        <div style="font-size: 15px; font-weight: 700; color: #fff;">CONSULTAR ESTOQUE</div>
                     </div>
                 </div>
                 
@@ -284,8 +281,15 @@
 
         </div>
 
-        <!-- NAVIGATION (REMOVIDO PARA LAYOUT CLÁSSICO) -->
-        <!-- O usuário prefere navegação centralizada -->
+        <!-- SMARTPHONE STYLE NAVIGATION -->
+        <nav class="nav-bottom" id="main-nav" style="display: flex; justify-content: space-around; padding: 10px 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.1);">
+            <a href="javascript:void(0)" class="nav-btn" onclick="window.history.back()" style="font-size: 24px; color: #fff; text-decoration: none;">
+                ◀️
+            </a>
+            <a href="javascript:void(0)" class="nav-btn" onclick="showScreen('screen-home')" style="font-size: 24px; color: #fff; text-decoration: none;">
+                🏠
+            </a>
+        </nav>
     </div>
 
     <!-- LOGIC -->
