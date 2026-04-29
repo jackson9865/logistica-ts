@@ -9,8 +9,8 @@
     <title>Jackson Sovereign | Rastreabilidade</title>
     <link rel="stylesheet" href="style_v15.css?v=1.7.2">
     <script>
-        // FORÇA ATUALIZAÇÃO TOTAL (BOMBA DE CACHE v1.8.8)
-        const CURRENT_VERSION = '1.8.8';
+        // FORÇA ATUALIZAÇÃO TOTAL (BOMBA DE CACHE v1.8.9)
+        const CURRENT_VERSION = '1.8.9';
         if (localStorage.getItem('sys_ver') !== CURRENT_VERSION) {
             localStorage.setItem('sys_ver', CURRENT_VERSION);
             if ('serviceWorker' in navigator) {
@@ -27,7 +27,7 @@
         // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=1.8.8')
+                navigator.serviceWorker.register('sw.js?v=1.8.9')
                     .then(reg => console.log('PWA: Ativo'))
                     .catch(err => console.log('PWA Erro:', err));
             });
@@ -65,15 +65,16 @@
                     </a>
                 </div>
 
-                <div style="position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px; background: #e11d48; border-top: 1px solid rgba(255,255,255,0.2); z-index: 9999;">
-                    <!-- Botão de Instalação PWA (EMERGÊNCIA - SEMPRE VISÍVEL) -->
-                    <button id="btn-install-pwa" style="background: #fff; border: none; color: #e11d48; width: 100%; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 900; font-size: 16px;" onclick="triggerPwaInstall()">
-                        🚨 BAIXAR APLICATIVO AGORA!
+                <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: auto; min-width: 200px; z-index: 9999;" class="pwa-only-browser">
+                    <!-- Botão de Instalação PWA (COMPACTO E ELEGANTE) -->
+                    <button id="btn-install-pwa" style="background: rgba(59, 130, 246, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(59, 130, 246, 0.3); color: #fff; width: 100%; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); transition: all 0.3s ease;" onclick="triggerPwaInstall()">
+                        <span style="background: var(--primary); padding: 5px; border-radius: 50%; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;">📥</span>
+                        INSTALAR APLICATIVO
                     </button>
                 </div>
 
                 <div style="position: absolute; bottom: 85px; width: 100%; text-align: center; color: var(--text-muted); font-size: 10px; left: 0; opacity: 0.4;">
-                    © 2024 Jackson Sovereign Logistics v1.8.8
+                    © 2024 Jackson Sovereign Logistics v1.8.9
                 </div>
             </div>
 
@@ -86,7 +87,7 @@
                 </div>
                 
                 <div class="glass-card">
-                    <div style="text-align: center; color: #10b981; font-weight: bold; font-size: 12px; margin-bottom: 15px;">✅ SISTEMA PRONTO v1.8.8</div>
+                    <div style="text-align: center; color: #10b981; font-weight: bold; font-size: 12px; margin-bottom: 15px;">✅ SISTEMA PRONTO v1.8.9</div>
                     <div class="input-group">
                         <label>Matrícula</label>
                         <input type="text" id="login-id" placeholder="Digite sua matrícula">
@@ -102,7 +103,7 @@
                         <a href="javascript:void(0)" onclick="showScreen('screen-forgot-password')" style="color: var(--text-muted); font-size: 13px; text-decoration: none;">Esqueci minha senha</a>
                     </div>
                     <div style="text-align: center; margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-                        <div style="font-size: 10px; color: var(--text-muted); opacity: 0.5;">Jackson Sovereign Logistics v1.8.8</div>
+                        <div style="font-size: 10px; color: var(--text-muted); opacity: 0.5;">Jackson Sovereign Logistics v1.8.9</div>
                     </div>
                 </div>
             </div>
@@ -426,6 +427,6 @@
     </div>
 
     <!-- LOGIC -->
-    <script src="app_v188.js?v=1.8.8"></script>
+    <script src="app_v189.js?v=1.8.9"></script>
 </body>
 </html>
