@@ -506,6 +506,14 @@ input {
     h2 { font-size: 22px; }
     .logo { font-size: 28px; }
     .scanner-view { height: 240px; }
+
+/* PWA - Ocultar botão se já estiver instalado */
+@media (display-mode: standalone) {
+    .pwa-only-browser {
+        display: none !important;
+    }
+}
+
     .nav-bottom { max-width: 600px; }
     .nav-icon { font-size: 24px; }
     .nav-btn { font-size: 12px; }
