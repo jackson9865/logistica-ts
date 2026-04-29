@@ -158,30 +158,24 @@
                     </div>
                 </div>
 
-                <div id="central-db-container">
-                    <!-- Dashboard content injected via JS -->
-                </div>
-                
-                <!-- BOTOES DE AÇÃO CENTRAIS -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 5px; margin-bottom: 25px;">
-                    <div class="glass-card" onclick="showScreen('screen-phase1')" style="cursor: pointer; text-align: center; padding: 25px 10px; border: 1px solid rgba(59, 130, 246, 0.3);">
+                <!-- BOTOES DE AÇÃO CENTRAIS (EMPILHADOS) -->
+                <div style="display: flex; flex-direction: column; gap: 15px; padding: 0 5px; margin-bottom: 25px;">
+                    <div class="glass-card" onclick="showScreen('screen-phase1')" style="cursor: pointer; text-align: center; padding: 30px 10px; border: 1px solid rgba(59, 130, 246, 0.4);">
                         <div style="font-size: 32px; margin-bottom: 10px;">📥</div>
-                        <div style="font-size: 13px; font-weight: 700; color: #fff;">ENTRADA</div>
+                        <div style="font-size: 16px; font-weight: 700; color: #fff;">ENTRADA DE MERCADORIA</div>
                     </div>
-                    <div class="glass-card" onclick="showScreen('screen-phase3')" style="cursor: pointer; text-align: center; padding: 25px 10px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                    <div class="glass-card" onclick="showScreen('screen-phase3')" style="cursor: pointer; text-align: center; padding: 30px 10px; border: 1px solid rgba(16, 185, 129, 0.4);">
                         <div style="font-size: 32px; margin-bottom: 10px;">🔄</div>
-                        <div style="font-size: 13px; font-weight: 700; color: #fff;">REPOSIÇÃO</div>
+                        <div style="font-size: 16px; font-weight: 700; color: #fff;">REPOSIÇÃO DE PICKING</div>
                     </div>
-                    <div class="glass-card" onclick="showScreen('screen-stock-query')" style="cursor: pointer; text-align: center; padding: 25px 10px; grid-column: span 2; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="glass-card" onclick="showScreen('screen-stock-query')" style="cursor: pointer; text-align: center; padding: 30px 10px; border: 1px solid rgba(255, 255, 255, 0.2);">
                         <div style="font-size: 32px; margin-bottom: 10px;">🔍</div>
-                        <div style="font-size: 13px; font-weight: 700; color: #fff;">CONSULTAR ESTOQUE</div>
+                        <div style="font-size: 16px; font-weight: 700; color: #fff;">CONSULTAR ESTOQUE</div>
                     </div>
                 </div>
-                
-                <div style="height: 5px;"></div>
                 
                 <div class="glass-card">
-                    <h2>ÚLTIMAS MOVIMENTAÇÕES</h2>
+                    <h3 style="margin-bottom: 20px; font-size: 15px; letter-spacing: 1px;">ÚLTIMAS MOVIMENTAÇÕES</h3>
                     <div id="log-entries" style="font-size: 13px;">
                         <div style="color: var(--text-muted); text-align: center; padding: 20px;">Nenhum item armazenado ainda</div>
                     </div>
@@ -202,6 +196,7 @@
                     </div>
                 </div>
                 <div id="query-results"></div>
+                <button class="btn btn-outline" style="margin-top: 20px; border-color: rgba(255,255,255,0.1);" onclick="showScreen('screen-home')">⬅️ VOLTAR PARA O INÍCIO</button>
             </div>
 
             <!-- SCREEN: PHASE 1 (RECEBIMENTO) -->
@@ -233,6 +228,7 @@
                     </div>
                     
                     <button class="btn btn-primary" style="margin-top: 20px;" id="btn-phase1-next" onclick="goToPhase2()">PRÓXIMA ETAPA ➡️</button>
+                    <button class="btn btn-outline" style="margin-top: 10px; border-color: rgba(255,255,255,0.1);" onclick="showScreen('screen-home')">⬅️ CANCELAR E VOLTAR</button>
                 </div>
             </div>
 
@@ -282,30 +278,14 @@
                     <div class="phase-tag">ETAPA 3</div>
                     <h2>Reposição de Picking</h2>
                     <div id="reposicao-list"></div>
+                    <button class="btn btn-outline" style="margin-top: 20px; border-color: rgba(255,255,255,0.1);" onclick="showScreen('screen-home')">⬅️ VOLTAR PARA O INÍCIO</button>
                 </div>
             </div>
 
         </div>
 
-        <!-- NAVIGATION -->
-        <nav class="nav-bottom" id="main-nav" style="display: none;">
-            <a href="javascript:void(0)" class="nav-btn active" onclick="showScreen('screen-home')">
-                <div class="nav-icon">📊</div>
-                Dashboard
-            </a>
-            <a href="javascript:void(0)" class="nav-btn" onclick="showScreen('screen-phase1')">
-                <div class="nav-icon">📦</div>
-                Entrada
-            </a>
-            <a href="javascript:void(0)" class="nav-btn" onclick="showScreen('screen-phase3')">
-                <div class="nav-icon">🔄</div>
-                Reposição
-            </a>
-            <a href="javascript:void(0)" class="nav-btn" onclick="showScreen('screen-stock-query')">
-                <div class="nav-icon">🔍</div>
-                Estoque
-            </a>
-        </nav>
+        <!-- NAVIGATION (REMOVIDO PARA LAYOUT CLÁSSICO) -->
+        <!-- O usuário prefere navegação centralizada -->
     </div>
 
     <!-- LOGIC -->
