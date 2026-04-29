@@ -199,19 +199,29 @@
             </div>
 
             <!-- SCREEN: CONSULTA ESTOQUE -->
+            <!-- SCREEN: CONSULTA / CONFERÊNCIA -->
             <div id="screen-stock-query" class="screen">
                 <div class="glass-card" style="margin-top: 10px;">
-                    <div class="phase-tag">CONSULTA</div>
-                    <h2>Buscar no Estoque</h2>
+                    <div class="phase-tag" style="background: rgba(59, 130, 246, 0.2); color: var(--primary);">CONFERÊNCIA</div>
+                    <h2>Consultar Pallet</h2>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">Bipe o QR Master ou digite o código/lote abaixo.</p>
+                    
+                    <div class="scanner-view" id="reader-query" onclick="startCamera('reader-query')" style="height: 120px; margin-bottom: 20px;">
+                        <div class="scanner-line"></div>
+                        <div style="font-size: 10px; opacity: 0.6; margin-top: 40px; text-align: center; width: 100%;">TOQUE PARA BIPAR ETIQUETA MASTER</div>
+                    </div>
+
                     <div class="input-group">
-                        <label>Lote do Produto</label>
+                        <label>Código, Lote ou ID</label>
                         <div style="display: flex; gap: 10px;">
-                            <input type="text" id="query-lote-input" placeholder="Digite o lote">
+                            <input type="text" id="query-lote-input" placeholder="Ex: 020 ou LT9876">
                             <button class="btn btn-primary" style="width: 60px; padding: 0;" onclick="runStockQuery()">🔍</button>
                         </div>
                     </div>
                 </div>
-                <div id="query-results"></div>
+                
+                <div id="query-results" style="padding: 0 5px;"></div>
+                
                 <button class="btn btn-outline" style="margin-top: 20px; border-color: rgba(255,255,255,0.1);" onclick="showScreen('screen-home')">⬅️ VOLTAR PARA O INÍCIO</button>
             </div>
 
@@ -256,7 +266,7 @@
                     <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">Dados para identificação do pallet.</p>
 
                     <!-- Preview da Etiqueta -->
-                    <div id="label-preview-container">
+                    <div id="dynamic-label">
                         <!-- Label HTML will be injected here -->
                     </div>
 

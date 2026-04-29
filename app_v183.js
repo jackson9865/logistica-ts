@@ -49,7 +49,8 @@ function saveProducts(products) {
 }
 
 function findProductBySKU(sku) {
-    return getProducts().find(p => p.sku === sku) || null;
+    const cleanSku = sku.replace('TS-', '');
+    return getProducts().find(p => p.sku === cleanSku || p.productId === cleanSku || p.sku === sku) || null;
 }
 
 function getNextProductId() {
@@ -79,7 +80,6 @@ function renderLabel() {
                 <div id="lbl-qr-canvas" class="lbl-qr-wrap"></div>
                 <div class="lbl-id">${currentEntry.productId}</div>
             </div>
-            <div class="label-divider"></div>
             <div class="label-right">
                 <div class="label-row">
                     <span class="label-icon">📍</span>
@@ -112,7 +112,7 @@ function renderLabel() {
                 <div class="label-row">
                     <span class="label-icon">📦</span>
                     <div>
-                        <div class="label-field-name">CONTEÚDO DA CAIXA:</div>
+                        <div class="label-field-name">CONTEÚDO:</div>
                         <div class="label-field-value">${currentEntry.content}</div>
                     </div>
                 </div>
@@ -124,12 +124,12 @@ function renderLabel() {
     const qrEl = document.getElementById('lbl-qr-canvas');
     if (qrEl && typeof QRCode !== 'undefined') {
         new QRCode(qrEl, {
-            text: currentEntry.sku !== '---' ? currentEntry.sku : currentEntry.productId,
-            width: 65,
-            height: 65,
+            text: currentEntry.sku !== '---' ? currentEntry.sku : `TS-${currentEntry.productId}`,
+            width: 90,
+            height: 90,
             colorDark: '#000000',
             colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.M
+            correctLevel: QRCode.CorrectLevel.H
         });
     }
 }
@@ -178,9 +178,27 @@ function startCamera(elementId) {
     });
 }
 
-// -------------------------------------------------------
-// SCAN HANDLER
-// -------------------------------------------------------
+// Lógica de Endereçamento Automático por Categoria
+function calculateAutomaticAddress(productName) {
+    const name = productName.toLowerCase();
+    // MEDICAMENTOS (PG 1 a 9)
+    if (name.includes('dipirona') || name.includes('amoxicilina') || name.includes('ibuprofeno') || name.includes('omeprazol') || name.includes('paracetamol')) {
+        const pg = Math.floor(Math.random() * 9) + 1;
+        return `PULMÃO PG0${pg} - MEDICAMENTOS`;
+    } 
+    // ALIMENTOS (PG 10 a 11)
+    else if (name.includes('alimento') || name.includes('biscoito') || name.includes('leite') || name.includes('doce')) {
+        const pg = Math.floor(Math.random() * 2) + 10;
+        return `PULMÃO PG${pg} - ALIMENTOS`;
+    } 
+    // PERFUMARIA (PG 12 a 20)
+    else if (name.includes('perfumaria') || name.includes('shampoo') || name.includes('sabonete') || name.includes('creme')) {
+        const pg = Math.floor(Math.random() * 9) + 12;
+        return `PULMÃO PG${pg} - PERFUMARIA`;
+    }
+    return 'PULMÃO GERAL - DEFINIR';
+}
+
 function handleSuccessfulScan(data) {
     const activeScreen = document.querySelector('.screen.active');
     
@@ -196,33 +214,38 @@ function handleSuccessfulScan(data) {
         const nextBtn = document.getElementById('btn-phase1-next');
         const skuDisplay = document.getElementById('scanned-sku');
 
-        // Look up product in database
+        // Busca o produto base
         const product = findProductBySKU(data);
 
+        // SEMPRE gera um ID único para esta entrada (Numeração diferente para cada pallet)
+        const uniquePalletId = getNextProductId();
+
         if (product) {
-            currentEntry = { ...product };
+            currentEntry = { 
+                ...product, 
+                productId: uniquePalletId, // Sobrescreve com ID único da carga
+                address: calculateAutomaticAddress(product.productName) // Define endereço por regra de negócio
+            };
             skuDisplay.innerText = `CÓDIGO: ${data} | ${product.productName}`;
             loteInput.value = `${product.lot} / VAL: ${product.validity}`;
         } else {
-            // Unknown product — store raw data and warn
             currentEntry = {
-                productId: getNextProductId(),
-                productName: 'Produto Não Cadastrado',
+                productId: uniquePalletId,
+                productName: 'Produto Novo (Cadastrar)',
                 sku: data,
                 lot: '---',
                 validity: '---',
                 content: '---',
-                address: '---'
+                address: 'DEFINIR NO RECEBIMENTO'
             };
-            skuDisplay.innerText = `CÓDIGO: ${data} — Cadastre este produto!`;
-            loteInput.value = 'Produto não encontrado no sistema';
+            skuDisplay.innerText = `CÓDIGO: ${data} — Novo item detectado!`;
+            loteInput.value = 'Aguardando definição de Lote/Validade';
         }
         
         skuCheck.classList.add('checked');
         productResult.style.display = 'block';
         nextBtn.style.opacity = '1';
         nextBtn.style.pointerEvents = 'auto';
-        // Count this as a pending load
         incrementPendingLoad();
     }
 
@@ -240,6 +263,11 @@ function handleSuccessfulScan(data) {
         }
     }
 
+    if (activeScreen.id === 'screen-stock-query') {
+        document.getElementById('query-lote-input').value = data;
+        runStockQuery();
+    }
+
     if (activeScreen.id === 'screen-phase3') {
         const s1 = document.getElementById('picking-step-1');
         const s2 = document.getElementById('picking-step-2');
@@ -254,6 +282,52 @@ function handleSuccessfulScan(data) {
             const finishBtn = document.getElementById('btn-finish-reposicao');
             if (finishBtn) finishBtn.style.display = 'block';
         }
+    }
+}
+
+function runStockQuery() {
+    const query = document.getElementById('query-lote-input').value.toLowerCase();
+    const resultsDiv = document.getElementById('query-results');
+    const products = getProducts();
+    
+    // Procura por SKU, Nome, Lote ou ID
+    const found = products.filter(p => 
+        p.sku.toLowerCase().includes(query) || 
+        p.productName.toLowerCase().includes(query) || 
+        p.lot.toLowerCase().includes(query) ||
+        p.productId.toLowerCase() === query
+    );
+
+    if (found.length > 0) {
+        resultsDiv.innerHTML = found.map(p => `
+            <div class="glass-card" style="border-left: 4px solid var(--primary); padding: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                    <div>
+                        <div style="font-size: 11px; color: var(--primary); font-weight: 700;">ID: ${p.productId}</div>
+                        <div style="font-size: 16px; font-weight: 700; color: #fff;">${p.productName}</div>
+                    </div>
+                    <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 700;">ESTOQUE ATIVO</div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
+                    <div style="background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px;">
+                        <div style="font-size: 9px; color: var(--text-muted);">LOTE</div>
+                        <div style="font-size: 12px; font-weight: 600;">${p.lot}</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px;">
+                        <div style="font-size: 9px; color: var(--text-muted);">VALIDADE</div>
+                        <div style="font-size: 12px; font-weight: 600;">${p.validity}</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 10px; background: rgba(59, 130, 246, 0.05); border-radius: 8px; border: 1px solid rgba(59,130,246,0.1);">
+                    <div style="font-size: 9px; color: var(--primary); font-weight: 700;">LOCALIZAÇÃO MASTER</div>
+                    <div style="font-size: 14px; font-weight: 700;">${p.address}</div>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        resultsDiv.innerHTML = `<div style="text-align: center; padding: 30px; color: var(--text-muted);">❌ Nenhum produto ou pallet encontrado.</div>`;
     }
 }
 
