@@ -9,25 +9,22 @@
     <title>Jackson Sovereign | Rastreabilidade</title>
     <link rel="stylesheet" href="style_v16.css?v=1.9.1">
     <script>
-        // FORÇA ATUALIZAÇÃO TOTAL (BOMBA DE CACHE v1.9.6)
-        const CURRENT_VERSION = '1.9.6';
-        if (localStorage.getItem('sys_ver') !== CURRENT_VERSION) {
-            localStorage.setItem('sys_ver', CURRENT_VERSION);
+        // FORÇA RESET TOTAL - SOLUÇÃO v2.0.0
+        const SYS_VERSION = '2.0.0';
+        if (localStorage.getItem('sys_v') !== SYS_VERSION) {
+            localStorage.clear();
+            localStorage.setItem('sys_v', SYS_VERSION);
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistrations().then(regs => {
                     for(let r of regs) r.unregister();
                 });
             }
-            caches.keys().then(names => {
-                for (let name of names) caches.delete(name);
-            });
             window.location.reload(true);
         }
 
-        // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=1.9.6')
+                navigator.serviceWorker.register('sw.js?v=2.0.0')
                     .then(reg => console.log('PWA: Ativo'))
                     .catch(err => console.log('PWA Erro:', err));
             });
@@ -426,6 +423,6 @@
     </div>
 
     <!-- LOGIC -->
-    <script src="app_v196.js?v=1.9.6"></script>
+    <script src="app.js?v=2.0.0"></script>
 </body>
 </html>
