@@ -9,16 +9,18 @@
     <title>Jackson Sovereign | Rastreabilidade</title>
     <link rel="stylesheet" href="style_v16.css?v=1.9.1">
     <script>
-        // FORÇA RESET TOTAL - MODO ULTRA v3.0.0
-        const SYS_VERSION = '3.0.0';
-        if (localStorage.getItem('sys_v') !== SYS_VERSION) {
+        // LIMPEZA AUTOMÁTICA E SILENCIOSA v4.0.0
+        const LOCK_VER = '4.0.0';
+        if (localStorage.getItem('sys_lock') !== LOCK_VER) {
             localStorage.clear();
-            localStorage.setItem('sys_v', SYS_VERSION);
+            sessionStorage.clear();
+            localStorage.setItem('sys_lock', LOCK_VER);
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistrations().then(regs => {
                     for(let r of regs) r.unregister();
                 });
             }
+            // Força o reload para aplicar a limpeza
             window.location.reload(true);
         }
 
@@ -97,11 +99,6 @@
                     </button>
                     <div style="text-align: center; margin-top: 20px;">
                         <a href="javascript:void(0)" onclick="showScreen('screen-forgot-password')" style="color: var(--text-muted); font-size: 13px; text-decoration: none;">Esqueci minha senha</a>
-                    </div>
-                    <div style="text-align: center; margin-top: 15px;">
-                        <button onclick="localStorage.clear(); sessionStorage.clear(); if('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(regs => { for(let r of regs) r.unregister(); }); } location.reload(true);" style="background: none; border: 1px solid rgba(225,29,72,0.3); color: #e11d48; font-size: 10px; padding: 5px 10px; border-radius: 5px; cursor: pointer; opacity: 0.7;">
-                            ⚠️ REDEFINIR SISTEMA (LIMPAR CACHE)
-                        </button>
                     </div>
                     <div style="text-align: center; margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
                         <div style="font-size: 10px; color: var(--text-muted); opacity: 0.5;">Jackson Sovereign Logistics v3.0.0</div>

@@ -185,24 +185,22 @@ function printLabel() {
 }
 
 // -------------------------------------------------------
-// CAMERA / SCANNER
+// CAMERA / SCANNER (AUTO-RECOVERY v4.0.0)
 // -------------------------------------------------------
 let videoStream = null;
 let isScanning = false;
+let lastFrameTime = 0;
 
 async function startCamera(elementId, silentMode = false) {
     const container = document.getElementById(elementId);
     if (!container) return;
 
-    // Reset total
     stopCamera();
     container.innerHTML = "";
     isScanning = true;
 
     const video = document.createElement("video");
-    video.style.width = "100%";
-    video.style.height = "100%";
-    video.style.objectFit = "cover";
+    video.style = "width:100%; height:100%; object-fit:cover;";
     video.setAttribute("playsinline", "true");
     video.muted = true;
     container.appendChild(video);
@@ -215,13 +213,22 @@ async function startCamera(elementId, silentMode = false) {
         videoStream = stream;
         video.srcObject = stream;
         await video.play();
+        lastFrameTime = Date.now();
 
-        // MOTOR DE RECONHECIMENTO (HÍBRIDO)
         const scanFrame = async () => {
             if (!isScanning) return;
 
+            // AUTO-RECUPERAÇÃO: Se a tela ficar preta/travada por 1.5s, reinicia
+            if (Date.now() - lastFrameTime > 1500) {
+                console.warn("Auto-Recuperação: Reiniciando câmera...");
+                startCamera(elementId, true);
+                return;
+            }
+
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                // 1. TENTA O MOTOR NATIVO DO GOOGLE (ULTRA RÁPIDO)
+                lastFrameTime = Date.now(); // Atualiza o "pulso" da câmera
+
+                // 1. MOTOR NATIVO
                 if ('BarcodeDetector' in window) {
                     try {
                         const detector = new BarcodeDetector();
@@ -230,7 +237,7 @@ async function startCamera(elementId, silentMode = false) {
                             finalizeScan(barcodes[0].rawValue);
                             return;
                         }
-                    } catch (e) { /* Fallback para jsQR */ }
+                    } catch (e) {}
                 }
 
                 // 2. MOTOR RESERVA (jsQR)
@@ -240,9 +247,7 @@ async function startCamera(elementId, silentMode = false) {
                 const ctx = canvas.getContext("2d");
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                    inversionAttempts: "dontInvert",
-                });
+                const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
 
                 if (code) {
                     finalizeScan(code.data);
@@ -255,8 +260,8 @@ async function startCamera(elementId, silentMode = false) {
         requestAnimationFrame(scanFrame);
 
     } catch (err) {
-        console.error("Camera Error:", err);
         if (!silentMode) {
+            console.error("Camera Fail:", err);
             alert("📷 ERRO: Acesse via HTTPS e dê permissão à câmera.");
         }
     }
