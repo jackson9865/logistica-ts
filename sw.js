@@ -1,11 +1,9 @@
-const CACHE_NAME = 'js-logistics-v1.8.5';
+const CACHE_NAME = 'js-logistics-v3.0.0';
 const ASSETS = [
   'index.html',
-  'style_v15.css',
-  'app_v185.js',
-  'manifest.json',
-  'icon.png',
-  'logistics_app_bg.png'
+  'style_v16.css',
+  'app.js',
+  'manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
@@ -21,14 +19,16 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.map(key => caches.delete(key)) // Delete ALL old caches
+        keys.map(key => {
+          if (key !== CACHE_NAME) return caches.delete(key);
+        })
       );
     }).then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', (event) => {
-  // Always try network first for the app logic
+  // ESTRATÉGIA: NETWORK FIRST (Sempre tenta a internet primeiro para garantir que o Jackson veja o código novo)
   if (event.request.mode === 'navigate' || event.request.url.includes('app.js') || event.request.url.includes('index.html')) {
     event.respondWith(
       fetch(event.request).catch(() => caches.match(event.request))
