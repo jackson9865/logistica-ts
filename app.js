@@ -3,7 +3,7 @@ let currentUser = { name: 'Operador', id: '000' }; // Tracks the logged-in user
 
 // Global Cloud Configuration (GitHub Pages Edition - Final Fix)
 const CLOUD_DB_URL = 'https://api.jsonbin.io/v3/b/662e864ead19ca34f861179e?meta=false';
-const SYSTEM_VERSION = '2.0.0-FINAL';
+const SYSTEM_VERSION = '3.0.0-ULTRA';
 
 // --- HARDWARE SCANNER SUPPORT (ZEBRA/COLLECTORS) ---
 let scanBuffer = "";
@@ -187,33 +187,94 @@ function printLabel() {
 // -------------------------------------------------------
 // CAMERA / SCANNER
 // -------------------------------------------------------
-function startCamera(elementId, silentMode = false) {
-    const config = { fps: 20, qrbox: { width: 280, height: 280 } };
-    
-    if (html5QrCode) {
-        html5QrCode.stop().catch(() => {});
-        html5QrCode = null;
-    }
+let videoStream = null;
+let isScanning = false;
 
-    html5QrCode = new Html5Qrcode(elementId);
-    
-    html5QrCode.start(
-        { facingMode: "environment" }, 
-        config,
-        (decodedText) => {
-            provideFeedback();
-            handleSuccessfulScan(decodedText);
-            if (html5QrCode) {
-                html5QrCode.stop().catch(() => {});
-                html5QrCode = null;
+async function startCamera(elementId, silentMode = false) {
+    const container = document.getElementById(elementId);
+    if (!container) return;
+
+    // Reset total
+    stopCamera();
+    container.innerHTML = "";
+    isScanning = true;
+
+    const video = document.createElement("video");
+    video.style.width = "100%";
+    video.style.height = "100%";
+    video.style.objectFit = "cover";
+    video.setAttribute("playsinline", "true");
+    video.muted = true;
+    container.appendChild(video);
+
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: "environment", focusMode: "continuous" } 
+        });
+        
+        videoStream = stream;
+        video.srcObject = stream;
+        await video.play();
+
+        // MOTOR DE RECONHECIMENTO (HÍBRIDO)
+        const scanFrame = async () => {
+            if (!isScanning) return;
+
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                // 1. TENTA O MOTOR NATIVO DO GOOGLE (ULTRA RÁPIDO)
+                if ('BarcodeDetector' in window) {
+                    try {
+                        const detector = new BarcodeDetector();
+                        const barcodes = await detector.detect(video);
+                        if (barcodes.length > 0) {
+                            finalizeScan(barcodes[0].rawValue);
+                            return;
+                        }
+                    } catch (e) { /* Fallback para jsQR */ }
+                }
+
+                // 2. MOTOR RESERVA (jsQR)
+                const canvas = document.createElement("canvas");
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: "dontInvert",
+                });
+
+                if (code) {
+                    finalizeScan(code.data);
+                    return;
+                }
             }
-        },
-        () => {}
-    ).catch((err) => {
+            requestAnimationFrame(scanFrame);
+        };
+
+        requestAnimationFrame(scanFrame);
+
+    } catch (err) {
+        console.error("Camera Error:", err);
         if (!silentMode) {
-            console.warn("Scanner: Câmera não iniciada.");
+            alert("📷 ERRO: Acesse via HTTPS e dê permissão à câmera.");
         }
-    });
+    }
+}
+
+function finalizeScan(data) {
+    isScanning = false;
+    provideFeedback();
+    handleSuccessfulScan(data);
+    stopCamera();
+}
+
+function stopCamera() {
+    isScanning = false;
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+    }
 }
 
 function provideFeedback() {

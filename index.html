@@ -9,8 +9,8 @@
     <title>Jackson Sovereign | Rastreabilidade</title>
     <link rel="stylesheet" href="style_v16.css?v=1.9.1">
     <script>
-        // FORÇA RESET TOTAL - SOLUÇÃO v2.0.0
-        const SYS_VERSION = '2.0.0';
+        // FORÇA RESET TOTAL - MODO ULTRA v3.0.0
+        const SYS_VERSION = '3.0.0';
         if (localStorage.getItem('sys_v') !== SYS_VERSION) {
             localStorage.clear();
             localStorage.setItem('sys_v', SYS_VERSION);
@@ -24,7 +24,7 @@
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=2.0.0')
+                navigator.serviceWorker.register('sw.js?v=3.0.0')
                     .then(reg => console.log('PWA: Ativo'))
                     .catch(err => console.log('PWA Erro:', err));
             });
@@ -36,7 +36,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <!-- EXTERNAL LIBS -->
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
@@ -70,7 +70,7 @@
                 </div>
 
                 <div style="position: absolute; bottom: 25px; width: 100%; text-align: center; color: var(--text-muted); font-size: 10px; left: 0; opacity: 0.5;">
-                    © 2024 Jackson Sovereign Logistics v1.9.6
+                    © 2024 Jackson Sovereign Logistics v3.0.0
                 </div>
             </div>
 
@@ -83,7 +83,7 @@
                 </div>
                 
                 <div class="glass-card">
-                    <div style="text-align: center; color: #10b981; font-weight: bold; font-size: 12px; margin-bottom: 15px;">✅ SISTEMA PRONTO v1.9.6</div>
+                    <div style="text-align: center; color: #10b981; font-weight: bold; font-size: 12px; margin-bottom: 15px;">✅ SISTEMA PRONTO v3.0.0</div>
                     <div class="input-group">
                         <label>Matrícula</label>
                         <input type="text" id="login-id" placeholder="Digite sua matrícula">
@@ -99,7 +99,7 @@
                         <a href="javascript:void(0)" onclick="showScreen('screen-forgot-password')" style="color: var(--text-muted); font-size: 13px; text-decoration: none;">Esqueci minha senha</a>
                     </div>
                     <div style="text-align: center; margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-                        <div style="font-size: 10px; color: var(--text-muted); opacity: 0.5;">Jackson Sovereign Logistics v1.9.6</div>
+                        <div style="font-size: 10px; color: var(--text-muted); opacity: 0.5;">Jackson Sovereign Logistics v3.0.0</div>
                     </div>
                 </div>
             </div>
@@ -423,6 +423,6 @@
     </div>
 
     <!-- LOGIC -->
-    <script src="app.js?v=2.0.0"></script>
+    <script src="app.js?v=3.0.0"></script>
 </body>
 </html>
