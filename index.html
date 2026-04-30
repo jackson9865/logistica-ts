@@ -9,8 +9,8 @@
     <title>Jackson Sovereign | Rastreabilidade</title>
     <link rel="stylesheet" href="style_v16.css?v=1.9.1">
     <script>
-        // FORÇA ATUALIZAÇÃO TOTAL (BOMBA DE CACHE v1.9.5)
-        const CURRENT_VERSION = '1.9.5';
+        // FORÇA ATUALIZAÇÃO TOTAL (BOMBA DE CACHE v1.9.6)
+        const CURRENT_VERSION = '1.9.6';
         if (localStorage.getItem('sys_ver') !== CURRENT_VERSION) {
             localStorage.setItem('sys_ver', CURRENT_VERSION);
             if ('serviceWorker' in navigator) {
@@ -27,7 +27,7 @@
         // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=1.9.5')
+                navigator.serviceWorker.register('sw.js?v=1.9.6')
                     .then(reg => console.log('PWA: Ativo'))
                     .catch(err => console.log('PWA Erro:', err));
             });
@@ -73,7 +73,7 @@
                 </div>
 
                 <div style="position: absolute; bottom: 25px; width: 100%; text-align: center; color: var(--text-muted); font-size: 10px; left: 0; opacity: 0.5;">
-                    © 2024 Jackson Sovereign Logistics v1.9.5
+                    © 2024 Jackson Sovereign Logistics v1.9.6
                 </div>
             </div>
 
@@ -86,7 +86,7 @@
                 </div>
                 
                 <div class="glass-card">
-                    <div style="text-align: center; color: #10b981; font-weight: bold; font-size: 12px; margin-bottom: 15px;">✅ SISTEMA PRONTO v1.9.5</div>
+                    <div style="text-align: center; color: #10b981; font-weight: bold; font-size: 12px; margin-bottom: 15px;">✅ SISTEMA PRONTO v1.9.6</div>
                     <div class="input-group">
                         <label>Matrícula</label>
                         <input type="text" id="login-id" placeholder="Digite sua matrícula">
@@ -102,7 +102,7 @@
                         <a href="javascript:void(0)" onclick="showScreen('screen-forgot-password')" style="color: var(--text-muted); font-size: 13px; text-decoration: none;">Esqueci minha senha</a>
                     </div>
                     <div style="text-align: center; margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-                        <div style="font-size: 10px; color: var(--text-muted); opacity: 0.5;">Jackson Sovereign Logistics v1.9.5</div>
+                        <div style="font-size: 10px; color: var(--text-muted); opacity: 0.5;">Jackson Sovereign Logistics v1.9.6</div>
                     </div>
                 </div>
             </div>
@@ -194,7 +194,7 @@
                 <!-- BOTOES DE AÇÃO CENTRAIS (DESIGN ULTRA-SLIM INOVADOR) -->
                 <div style="display: flex; flex-direction: column; gap: 12px; padding: 0 5px; margin-bottom: 25px;">
                     
-                    <div class="glass-card-slim" onclick="showScreen('screen-phase1')">
+                    <div class="glass-card-slim" onclick="showScreen('screen-phase1'); startCamera('reader-phase1');">
                         <div class="slim-indicator" style="background: #3b82f6;"></div>
                         <div class="slim-content">
                             <div class="slim-title">ENTRADA DE MERCADORIA</div>
@@ -203,7 +203,7 @@
                         <div class="slim-arrow">❯</div>
                     </div>
 
-                    <div class="glass-card-slim" onclick="showScreen('screen-forklift')">
+                    <div class="glass-card-slim" onclick="showScreen('screen-forklift'); startCamera('reader-forklift');">
                         <div class="slim-indicator" style="background: #f59e0b;"></div>
                         <div class="slim-content">
                             <div class="slim-title">ARMAZENAGEM</div>
@@ -221,7 +221,7 @@
                         <div class="slim-arrow">❯</div>
                     </div>
 
-                    <div class="glass-card-slim" onclick="showScreen('screen-stock-query')">
+                    <div class="glass-card-slim" onclick="showScreen('screen-stock-query'); startCamera('reader-query');">
                         <div class="slim-indicator" style="background: #94a3b8;"></div>
                         <div class="slim-content">
                             <div class="slim-title">CONSULTAR ESTOQUE</div>
@@ -230,7 +230,7 @@
                         <div class="slim-arrow">❯</div>
                     </div>
 
-                    <div class="glass-card-slim" onclick="showScreen('screen-conferencia')">
+                    <div class="glass-card-slim" onclick="showScreen('screen-conferencia'); startCamera('reader-conf');">
                         <div class="slim-indicator" style="background: #e11d48;"></div>
                         <div class="slim-content">
                             <div class="slim-title">CONFERÊNCIA MASTER</div>
@@ -426,6 +426,6 @@
     </div>
 
     <!-- LOGIC -->
-    <script src="app_v195.js?v=1.9.5"></script>
+    <script src="app_v196.js?v=1.9.6"></script>
 </body>
 </html>
